@@ -49,6 +49,22 @@ public:
 		y -= b.y;
 		z -= b.z;
 	}
+
+	float Dot(SospVector3 b)
+	{
+		return acos((x * b.x + y * b.y + z * b.z) / (Magnitude() * b.Magnitude()));
+	}
+
+	SospVector3 Cross(SospVector3 b)
+	{
+		SospVector3 vec;
+
+		vec.x = (y * b.z) - (z * b.y);
+		vec.y = (z * b.x) - (x * b.z);
+		vec.z = (x * b.y) - (y * b.x);
+
+		return vec;
+	}
 	
 	// Multiply the vector by a scalar value
 	void Multiply(float value)
@@ -58,9 +74,19 @@ public:
 		z *= value;
 	}
 
+	// Divide the vector by a scalar value
+	void Divide(float value)
+	{
+		x /= value;
+		y /= value;
+		z /= value;
+	}
+
 	void Divide(SospVector3 b)
 	{
-
+		x /= b.x;
+		y /= b.y;
+		z /= b.z;
 	}
 
 	float Magnitude()
