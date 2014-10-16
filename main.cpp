@@ -1,8 +1,10 @@
 #include <Windows.h>
 #include <windowsx.h>
 #include <d3d9.h>
+#include <d3dx9.h>
 
 #pragma comment (lib, "d3d9.lib");
+#pragma comment (lib, "d3dx9.lib");
 
 #define SCREEN_WIDTH 640
 #define SCREEN_HEIGHT 480
@@ -10,13 +12,22 @@
 // Global Declarations
 LPDIRECT3D9 d3d; // Pointer to d3d interface
 LPDIRECT3DDEVICE9 d3ddev; // Pointer to device class
+LPDIRECT3DVERTEXBUFFER9 v_buffer = NULL;
 
 void initD3D(HWND hWnd);
 void render_frame(void);
 void cleanD3D(void);
+void init_graphics(void);
 
 // WindowProc Function prototype
 LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+
+struct CUSTOMVERTEX
+{
+	FLOAT x, y, z; // from D3DFVF_XYZRHW
+	DWORD color; // from D3DFVF_DIFFUSE
+};
+#define CUSTOMFVF (D3DFVF_XYZ | D3DFVF_DIFFUSE)
 
 void initD3D(HWND hWnd)
 {
@@ -38,13 +49,48 @@ void initD3D(HWND hWnd)
 		D3DCREATE_SOFTWARE_VERTEXPROCESSING,
 		&d3dpp,
 		&d3ddev);
+
+	init_graphics();
+
+	d3ddev->SetRenderState(D3DRS_LIGHTING, FALSE);
 }
 
 void render_frame(void)
 {
-	d3ddev->Clear(0, NULL, D3DCLEAR_TARGET, D3DCOLOR_XRGB(0, 40, 100), 1.0f, 0);
+	d3ddev->Clear(0, NULL, D3DCLEAR_TARGET, D3DCOLOR_XRGB(0, 0, 0), 1.0f, 0);
 
 	d3ddev->BeginScene();
+
+		d3ddev->SetFVF(CUSTOMFVF);
+
+		static float index = 0.0f; index += 0.05f;
+
+		D3DXMATRIX matRotateY;
+		D3DXMatrixRotationY(&matRotateY, index);
+		d3ddev->SetTransform(D3DTS_WORLD, &matRotateY);
+
+		D3DXMATRIX matView;
+		D3DXMatrixLookAtLH(&matView,
+						   &D3DXVECTOR3(0.0f, 0.0f, 10.0f),
+						   &D3DXVECTOR3(0.0f, 0.0f, 0.0f),
+						   &D3DXVECTOR3(0.0f, 1.0f, 0.0f));
+
+		d3ddev->SetTransform(D3DTS_VIEW, &matView);
+
+		D3DXMATRIX matProjection;
+
+		D3DXMatrixPerspectiveFovLH(&matProjection,
+			D3DXToRadian(45),
+			(FLOAT)SCREEN_WIDTH / (FLOAT)SCREEN_HEIGHT,
+			1.0f,
+			100.0f);
+
+		d3ddev->SetTransform(D3DTS_PROJECTION, &matProjection);
+
+		d3ddev->SetStreamSource(0, v_buffer, 0, sizeof(CUSTOMVERTEX));
+
+		d3ddev->DrawPrimitive(D3DPT_TRIANGLESTRIP, 0, 12);
+
 	// do 3D rendering on the back buffer here
 	d3ddev->EndScene();
 	d3ddev->Present(NULL, NULL, NULL, NULL);
@@ -52,8 +98,38 @@ void render_frame(void)
 
 void cleanD3D(void)
 {
+	v_buffer->Release();
 	d3ddev->Release();
 	d3d->Release();
+}
+
+void init_graphics(void)
+{
+	// create four vertices using the CUSTOMVERTEX struct built earlier
+	CUSTOMVERTEX vertices[] =
+	{
+		{ -3.0f, 3.0f, -3.0f, D3DCOLOR_XRGB(0, 0, 255), },
+		{ 3.0f, 3.0f, -3.0f, D3DCOLOR_XRGB(0, 255, 0), },
+		{ -3.0f, -3.0f, -3.0f, D3DCOLOR_XRGB(255, 0, 0), },
+		{ 3.0f, -3.0f, -3.0f, D3DCOLOR_XRGB(0, 255, 255), },
+		{ -3.0f, 3.0f, 3.0f, D3DCOLOR_XRGB(0, 0, 255), },
+		{ 3.0f, 3.0f, 3.0f, D3DCOLOR_XRGB(0, 255, 0), },
+		{ -3.0f, -3.0f, 3.0f, D3DCOLOR_XRGB(255, 0, 0), },
+		{ 3.0f, -3.0f, 3.0f, D3DCOLOR_XRGB(0, 255, 255), },
+	};
+
+	d3ddev->CreateVertexBuffer(8 * sizeof(CUSTOMVERTEX),
+							   0,
+							   CUSTOMFVF,
+							   D3DPOOL_MANAGED,
+							   &v_buffer,
+							   NULL);
+
+	VOID* pVoid;
+
+	v_buffer->Lock(0, sizeof(vertices), (void**)&pVoid, 0);
+	memcpy(pVoid, vertices, sizeof(vertices));
+	v_buffer->Unlock();
 }
 
 // Entry point of the program
@@ -69,7 +145,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	wc.lpfnWndProc = WindowProc;
 	wc.hInstance = hInstance;
 	wc.hCursor = LoadCursor(NULL, IDC_ARROW);
-	//wc.hbrBackground = (HBRUSH)COLOR_WINDOW;
 	wc.lpszClassName = L"WindowClass1";
 
 	RegisterClassEx(&wc);
