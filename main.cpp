@@ -42,6 +42,8 @@ void initD3D(HWND hWnd)
 	d3dpp.BackBufferFormat = D3DFMT_X8R8G8B8;
 	d3dpp.BackBufferWidth = SCREEN_WIDTH;
 	d3dpp.BackBufferHeight = SCREEN_HEIGHT;
+	d3dpp.EnableAutoDepthStencil = TRUE;
+	d3dpp.AutoDepthStencilFormat = D3DFMT_D16;
 
 	d3d->CreateDevice(D3DADAPTER_DEFAULT,
 		D3DDEVTYPE_HAL,
@@ -53,27 +55,22 @@ void initD3D(HWND hWnd)
 	init_graphics();
 
 	d3ddev->SetRenderState(D3DRS_LIGHTING, FALSE);
+	d3ddev->SetRenderState(D3DRS_ZENABLE, TRUE);
 }
 
 void render_frame(void)
 {
 	d3ddev->Clear(0, NULL, D3DCLEAR_TARGET, D3DCOLOR_XRGB(0, 0, 0), 1.0f, 0);
+	d3ddev->Clear(0, NULL, D3DCLEAR_ZBUFFER, D3DCOLOR_XRGB(0, 0, 0), 1.0f, 0);
 
 	d3ddev->BeginScene();
-
-		d3ddev->SetFVF(CUSTOMFVF);
-
-		static float index = 0.0f; index += 0.05f;
-
-		D3DXMATRIX matRotateY;
-		D3DXMatrixRotationY(&matRotateY, index);
-		d3ddev->SetTransform(D3DTS_WORLD, &matRotateY);
+	d3ddev->SetFVF(CUSTOMFVF);
 
 		D3DXMATRIX matView;
 		D3DXMatrixLookAtLH(&matView,
-						   &D3DXVECTOR3(0.0f, 0.0f, 10.0f),
-						   &D3DXVECTOR3(0.0f, 0.0f, 0.0f),
-						   &D3DXVECTOR3(0.0f, 1.0f, 0.0f));
+			&D3DXVECTOR3(0.0f, 0.0f, 10.0f),
+			&D3DXVECTOR3(0.0f, 0.0f, 0.0f),
+			&D3DXVECTOR3(0.0f, 1.0f, 0.0f));
 
 		d3ddev->SetTransform(D3DTS_VIEW, &matView);
 
@@ -89,7 +86,20 @@ void render_frame(void)
 
 		d3ddev->SetStreamSource(0, v_buffer, 0, sizeof(CUSTOMVERTEX));
 
-		d3ddev->DrawPrimitive(D3DPT_TRIANGLESTRIP, 0, 12);
+		D3DXMATRIX matTranslateA;
+		D3DXMATRIX matTranslateB;
+		D3DXMATRIX matRotateY;
+		static float index = 0.0f; index += 0.1f;
+
+		D3DXMatrixTranslation(&matTranslateA, 0.0f, 0.0f, 2.0f);
+		D3DXMatrixTranslation(&matTranslateB, 0.0f, 0.0f, -2.0f);
+		D3DXMatrixRotationY(&matRotateY, index);
+
+		d3ddev->SetTransform(D3DTS_WORLD, &(matTranslateA * matRotateY));
+		d3ddev->DrawPrimitive(D3DPT_TRIANGLELIST, 0, 1);
+
+		d3ddev->SetTransform(D3DTS_WORLD, &(matTranslateB * matRotateY));
+		d3ddev->DrawPrimitive(D3DPT_TRIANGLELIST, 0, 1);
 
 	// do 3D rendering on the back buffer here
 	d3ddev->EndScene();
@@ -108,17 +118,12 @@ void init_graphics(void)
 	// create four vertices using the CUSTOMVERTEX struct built earlier
 	CUSTOMVERTEX vertices[] =
 	{
-		{ -3.0f, 3.0f, -3.0f, D3DCOLOR_XRGB(0, 0, 255), },
-		{ 3.0f, 3.0f, -3.0f, D3DCOLOR_XRGB(0, 255, 0), },
-		{ -3.0f, -3.0f, -3.0f, D3DCOLOR_XRGB(255, 0, 0), },
-		{ 3.0f, -3.0f, -3.0f, D3DCOLOR_XRGB(0, 255, 255), },
-		{ -3.0f, 3.0f, 3.0f, D3DCOLOR_XRGB(0, 0, 255), },
-		{ 3.0f, 3.0f, 3.0f, D3DCOLOR_XRGB(0, 255, 0), },
-		{ -3.0f, -3.0f, 3.0f, D3DCOLOR_XRGB(255, 0, 0), },
-		{ 3.0f, -3.0f, 3.0f, D3DCOLOR_XRGB(0, 255, 255), },
+		{ -3.0f, -3.0f, 0.0f, D3DCOLOR_XRGB(0, 0, 255), },
+		{ 0.0f, 3.0f, 0.0f, D3DCOLOR_XRGB(0, 255, 0), },
+		{ 3.0f, -3.0f, 0.0f, D3DCOLOR_XRGB(255, 0, 0), },
 	};
 
-	d3ddev->CreateVertexBuffer(8 * sizeof(CUSTOMVERTEX),
+	d3ddev->CreateVertexBuffer(3 * sizeof(CUSTOMVERTEX),
 							   0,
 							   CUSTOMFVF,
 							   D3DPOOL_MANAGED,

@@ -1,16 +1,16 @@
-﻿Build started 16/10/2014 14:24:09.
-     1>Project "C:\Users\cstephens\Desktop\SospParticles\SospParticles\SospParticles.vcxproj" on node 2 (Build target(s)).
+﻿Build started 16/10/2014 23:00:50.
+     1>Project "C:\Users\Chris\Desktop\ParticleSystem\SospParticles\SospParticles\SospParticles.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /I"C:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\include" /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _WINDOWS /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt main.cpp
          main.cpp
-     1>c:\users\cstephens\desktop\sospparticles\sospparticles\main.cpp(6): warning C4081: expected 'newline'; found ';'
-     1>c:\users\cstephens\desktop\sospparticles\sospparticles\main.cpp(7): warning C4081: expected 'newline'; found ';'
+     1>c:\users\chris\desktop\particlesystem\sospparticles\sospparticles\main.cpp(6): warning C4081: expected 'newline'; found ';'
+     1>c:\users\chris\desktop\particlesystem\sospparticles\sospparticles\main.cpp(7): warning C4081: expected 'newline'; found ';'
        Link:
-         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\cstephens\Desktop\SospParticles\SospParticles\Debug\SospParticles.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\cstephens\Desktop\SospParticles\SospParticles\Debug\SospParticles.pdb" /SUBSYSTEM:WINDOWS /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\cstephens\Desktop\SospParticles\SospParticles\Debug\SospParticles.lib" /MACHINE:X86 Debug\main.obj
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\Chris\Desktop\ParticleSystem\SospParticles\Debug\SospParticles.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\Chris\Desktop\ParticleSystem\SospParticles\Debug\SospParticles.pdb" /SUBSYSTEM:WINDOWS /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\Chris\Desktop\ParticleSystem\SospParticles\Debug\SospParticles.lib" /MACHINE:X86 Debug\main.obj
          Debug\SospParticle.obj
-         SospParticles.vcxproj -> C:\Users\cstephens\Desktop\SospParticles\SospParticles\Debug\SospParticles.exe
-     1>Done Building Project "C:\Users\cstephens\Desktop\SospParticles\SospParticles\SospParticles.vcxproj" (Build target(s)).
+         SospParticles.vcxproj -> C:\Users\Chris\Desktop\ParticleSystem\SospParticles\Debug\SospParticles.exe
+     1>Done Building Project "C:\Users\Chris\Desktop\ParticleSystem\SospParticles\SospParticles\SospParticles.vcxproj" (Build target(s)).
 
 Build succeeded.
 
-Time Elapsed 00:00:00.67
+Time Elapsed 00:00:00.68
